@@ -1,2 +1,3 @@
 # structure
-hcmuter
+#include<stdio.h>
+
