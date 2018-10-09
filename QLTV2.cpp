@@ -37,10 +37,18 @@ typedef struct Booknode {
 	Book info;
 	Booknode *pnext;
 };
+typedef struct Phieunode {
+	PhieuMuon info;
+	Phieunode *pnext;
+};
 
 typedef struct list {
 	Booknode *phead;
 	Booknode *ptail;
+};
+typedef struct list1 {
+	Phieunode *ahead;
+	Phieunode *atail;
 };
 
 Booknode *getnode(Book &s);
@@ -54,8 +62,9 @@ void xuat(list l);
 
 void phieu_load_file();
 void phieu_save_file();
-void phieu_nhap();
-void phieu_xuat();
+void phieu_nhap(list1 &a);
+void phieu_xuat(list1 &a);
+void addhead(list1 &l, Phieunode *p);
 void phieu_them();
 void phieu_xoa();
 int  phieu_tim(char ma_tam[]);
@@ -70,7 +79,7 @@ void sach_load_file();
 void sach_save_file();
 void sach_nhap(Book &a);
 void nhap(list &l, int n);
-void sach_xuat();
+void sach_xuat(list a);
 int RemoveHead(list &l);
 void AddTail(list &L, Booknode *p);
 void search_tacgia(list l, char tacgia_key[30]);
@@ -384,43 +393,80 @@ end:;
 void nhap(list &l, int n)
 {
 	Book x[100];
-	Booknode *p;
-	for (int i = 1; i <= n; i++)
-	{
-		cout << "Nhap dau sach thu " << i << " :" << endl;
-		sach_nhap(x[i]);
-		p = getnode(x[i]);
-		AddTail(l, p);
-	}
-
+	int i = 1;
+	Booknode *p[100];
+		for(int i=0;i<n;i++)
+		{
+			cout << "Nhap dau sach thu " << i << " :" << endl;
+			sach_nhap(x[i]);
+			p[i] = getnode(x[i]);
+			AddTail(l, p[i]);
+		}
 }
 void sach_nhap(Book &a)
 {
 	cout << "Nhap ma sach: ";
 	cin >> a.masach;
+	fflush(stdin);
 	cout << "Nhap ten sach : ";
 	cin.ignore();
-	cin.getline(a.tensach, 9);
+	cin.getline(a.tensach, 30);
 	cout << "Nhap ten tac gia cua sach: ";
+	fflush(stdin);
 	cin.ignore();
 	cin.getline(a.tacgia, 50);
+	fflush(stdin);
 	cout << "Nhap ten nxb: ";
 	cin.getline(a.nxb, 100);
+	fflush(stdin);
 	cout << "Nhap nam xuat ban:";
 	cin >> a.namxb;
-	cout << "Nhap ten tac gia cua sach: ";
-	cin.ignore();
+	fflush(stdin);
 	cout << endl;
 }
-void sach_xuat(Book a)
+void sach_xuat(list a)
 {
+	Booknode *p;
 	cout << endl;
-	cout << "Ma sach la: " << a.masach << endl;
-	cout << "Ten sach la : " << a.tensach << endl;
-	cout << "Ten tac gia cua sach: " << a.tacgia << endl;
-	cout << "Ten nxb la: " << a.nxb << endl;
-	cout << "Ma nam xuat ban: " << a.namxb << endl;
+	cout << "Ma sach la: " << p->info.masach << endl;
+	cout << "Ten sach la : " << p->info.tensach << endl;
+	cout << "Ten tac gia cua sach: " << p->info.tacgia << endl;
+	cout << "Ten nxb la: " << p->info.nxb << endl;
+	cout << "Ma nam xuat ban: " << p->info.namxb << endl;
 }
+
+void phieu_nhap(PhieuMuon &a)
+{
+	Phieunode *p;
+	cin.ignore();
+	cout << "Ma Phieu:";
+	cin.getline(a.maphieu, 8);
+	cout << "Ho ten:";
+	cin.getline(a.hoten, 50);
+	cout << "so luong sach muon:";
+	cin >> a.slsach;
+}
+
+void phieu_xuat(list1 &a)
+{
+	Phieunode *R;
+	int i = 1;
+	Phieunode *R = a.ahead;
+	cout << "\n";
+	if (R == NULL)
+		cout << "\n\t Danh sach trong !";
+	else
+	{
+		while (R != NULL)
+		{
+			cout << "Ma Phieu:" << p->info.maphieu << endl;
+			cout << "Ho Ten:" << p->info.hoten << endl;
+			cout << "So luong sach:" << p->info.slsach << endl;
+			R = R->pnext;
+		}
+	}
+}
+
 
 Booknode *getnode(Book &s)
 {
@@ -430,6 +476,26 @@ Booknode *getnode(Book &s)
 	p->info = s;
 	p->pnext = NULL;
 	return p;
+}
+Phieunode *getnode(PhieuMuon &s)
+{
+	Phieunode *p;
+	p = new Phieunode;
+	if (p == NULL);
+	p->info = s;
+	p->pnext = NULL;
+	return p;
+}
+void addhead(list1 &l, Phieunode *a)
+{
+	if (l.ahead == NULL) {
+		l.ahead = a;
+		l.atail = l.ahead;
+	}
+	else {
+		a->pnext = l.ahead;
+		l.ahead = a;
+	}
 }
 void AddHead(list &l, Booknode *p)
 {
