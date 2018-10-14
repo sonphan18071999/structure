@@ -125,6 +125,11 @@ void Xuat_Danh_Sach_Sinh_Vien(LIST l)
 		Xuat(k->data);
 	}
 }
+void Giai_Phong_Vung_Nho(LIST &l);
+void Hoan_Vi(bill &x, bill &y);
+void Sap_Xep_Tang_Dan(LIST &l);
+void Ghi_thong_tin_1_bill(ofstream &fileout, bill b);
+void Luu_File_Sap_Xep_Tang_Dan_Diem_Trung_Binh(LIST &l);
 using namespace std;
 int main()
 {	
@@ -135,8 +140,62 @@ int main()
 	filein.open("bill.txt", ios::in);
 	Doc_Danh_Sach_Sinh_Vien(filein, l);
 	Xuat_Danh_Sach_Sinh_Vien(l);
-	filein.close();
+
 	Doc_Thong_Tin_1_Bill(filein, d);
 	Xuat(d);
+
+
+	Luu_File_Sap_Xep_Tang_Dan_Diem_Trung_Binh(l);
+	Giai_Phong_Vung_Nho(l);
+	filein.close();
 	return 0;
+}
+void Giai_Phong_Vung_Nho(LIST &l)
+{
+	NODE *p = NULL;
+	while (l.pHead != NULL)
+	{
+		p = l.pHead;
+		l.pHead = l.pHead->pNext;
+		delete p;
+	}
+}
+void Hoan_Vi(bill &x, bill &y)
+{
+	bill tam = x;
+	x = y;
+	y = tam;
+}
+void Sap_Xep_Tang_Dan(LIST &l)
+{
+	for (NODE *k = l.pHead; k != NULL; k = k->pNext)
+	{
+		for (NODE *h = k->pNext; h != NULL; h = h->pNext)
+		{
+			if (k->data.ten < h->data.ten)
+			{
+				Hoan_Vi(k->data, h->data);
+			}
+		}
+	}
+}
+void Ghi_thong_tin_1_bill(ofstream &fileout, bill b)
+{
+	fileout << bill.mssv << ",";
+	fileout << bill.ten << ",";
+	fileout << bill.date.ngay << "/" << bill.date.thang << "/" << bill.date.name << ".";
+
+}
+void Luu_File_Sap_Xep_Tang_Dan_Diem_Trung_Binh(LIST &l)
+{
+	ofstream fileout;
+	fileout.open("bill.txt", ios::out);
+	Sap_Xep_Tang_Dan(l);
+	for (NODE *k = l.pHead; k != NULL; k = k->pNext)
+	{
+		Ghi_thong_tin_1_bill(fileout, k->data);
+		fileout << endl;
+	}
+	fileout.close();
+
 }
