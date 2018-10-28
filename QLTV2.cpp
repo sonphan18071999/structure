@@ -33,6 +33,13 @@ typedef struct PhieuMuon {
 	char hoten[50];
 	int slsach;
 };
+typedef struct CTPM {
+	char hoten[50];
+	int mssv;
+	int masach;
+	char tensach[50];
+	char trachua;
+};
 typedef struct Booknode {
 	Book info;
 	Booknode *pnext;
@@ -59,16 +66,24 @@ int RemoveHead(list &l);
 void search_tacgia(list l, char tacgia_key[30]);
 int RemoveAfterQ(list &l, Booknode *q);
 void xuat(list l);
+void selectionsort(list &L);
 
+
+Phieunode *getnode1(PhieuMuon &s);
 void phieu_load_file();
 void phieu_save_file();
-void phieu_nhap(list1 &a);
+void phieu_nhap(PhieuMuon &a);
 void phieu_xuat(list1 &a);
+void nhapphieu(list1 &l, int n);
 void addhead(list1 &l, Phieunode *p);
-void phieu_them();
-void phieu_xoa();
-int  phieu_tim(char ma_tam[]);
-void phieu_hieu_chinh();
+void addtail(list1 &l, Phieunode *p);
+void createList1(list1 &l);
+void phieu_hieu_chinh(list1 l, char key[30]);
+void phieu_them(list1 &l, PhieuMuon &a);
+int phieu_xoa(list1 &l);
+int removeX(list1 &l, char key[30]);
+int removeafterQ(list1 &l, Phieunode *q);
+
 //-----------------------------------------------
 void ctphieu_nhap();
 void ctphieu_xuat();
@@ -101,12 +116,21 @@ void interface_bill_detail_manager();
 
 void main()                                                                                 
 {               
-	interface_book_manager();
+	interface_bill_manager();
 }                                                                                       
 																						
 void interface_book_manager() {
 begin:
-
+	Book s;
+	list l;
+	Booknode *p;
+	int x, chon;
+	char key[30];
+	createList(l);
+	int n;
+	cout << "nhap so luong sach:";
+	cin >> n;
+	nhap(l, n);
 	system("cls");
 	cout << endl << endl;
 	cout << "               +-------------------------------------------------+ \n";
@@ -123,25 +147,12 @@ begin:
 	cout << "               |                                                 | \n";
 	cout << "               +-------------------------------------------------+ \n";
 
-	Book s;
-	list l;
-	Booknode *p;
-	int x, chon;
-	char key[30];
-	createList(l);
+	
 	
 
 	scanf("%d", &chon);
 	switch (chon)
 	{
-	case 0:
-	{
-		int n;
-		cout << "nhap so luong sach:";
-		cin >> n;
-		nhap(l,n);
-		break;
-	}
 	case 1: {
 		printf("\n\t Nhap Ma Sach(so): "); scanf("%d", &s.masach); fflush(stdin);
 		printf("\n\t Nhap Ten Sach: "); scanf("%s", &s.tensach);
@@ -180,86 +191,81 @@ begin:
 		search_tacgia(l, key);
 		break;
 	}
+	case 6:
+	{
+		selectionsort(l);
+	}
 	}
 
-	goto begin;
-end:;
+	/*goto begin;
+end:;*/
 }
 
-//void interface_bill_manager() {
-//begin:
-//	//system("cls");
-//	cout << endl << endl;
-//	cout << "               +-------------------------------------------------+ \n";
-//	cout << "               |      GIAO DIEN QUAN LY PHIEU MUON SACH          | \n";
-//	cout << "               |-------------------------------------------------| \n";
-//	cout << "               |                                                 | \n";
-//	cout << "               |  1. Nhap Phieu.                                 | \n";
-//	cout << "               |  2. Them Phieu.                                 | \n";
-//	cout << "               |  3. Xoa Phieu.                                  | \n";
-//	cout << "               |                                                 | \n";
-//	cout << "               |  4. Xuat Phieu.                                 | \n";
-//	cout << "               |  5. Hieu chinh Phieu.                           | \n";
-//	cout << "               |  6. Tim Phieu.                                  | \n";
-//	cout << "               |                                                 | \n";
-//	cout << "               |  7. Back.                                       | \n";
-//	cout << "               |                                                 | \n";
-//	cout << "               +-------------------------------------------------+ \n";
-//
-//	char chon;
-//	bool k = true;
-//
-//	do
-//	{
-//		if (k == false)
-//			cout << "Hay chon cong viec theo so tu 1 den 3 :";
-//		else
-//			cout << "Chon cong viec theo so: "; cin >> chon;
-//		k = false;
-//	} while ((chon < '1') || (chon > '7'));
-//
-//
-//	switch (chon) {
-//	case '1':   system("cls");
-//		phieu_nhap();
-//		break;
-//	case '2':
-//		system("cls");
-//		phieu_them();
-//		break;
-//	case '3':
-//		phieu_xoa();
-//		break;
-//	case '4':
-//		system("cls");
-//		phieu_xuat();
-//		break;
-//	case '5':
-//		system("cls");
-//		phieu_hieu_chinh();
-//		break;
-//	case '6':
-//		cin.ignore();
-//		cout << "Nhap ma phieu (Ma SV) can tim : "; cin.getline(ma_tam, 50);
-//
-//		i = phieu_tim(ma_tam);
-//
-//		if (i == 0)
-//			cout << "- Khong tim thay phieu co ma so tren. ";
-//		else {
-//			cout << "\nDa tim thay phieu: \n";
-//			cout << setw(15) << ".Ma Phieu/ Ma SV" << setw(15) << "Ten SV" << endl << endl;
-//			cout << setw(15) << lst_bill[i].bill_maSV << setw(15) << lst_bill[i].bill_tenSV;
-//			cout << endl;
-//		}
-//		break;
-//	case '7':
-//		goto end;
-//		break;
-//	}
-//	goto begin;
-//end:;
-//}
+void interface_bill_manager() {
+begin:
+	PhieuMuon s;
+	list1 l;
+	Phieunode *p;
+	int x, chon;
+	createList1(l);
+
+	int n;
+	cout << "nhap so luong phieu:";
+	cin >> n;
+	nhapphieu(l, n);
+	//system("cls");
+
+	cout << endl << endl;
+	cout << "               +-------------------------------------------------+ \n";
+	cout << "               |      GIAO DIEN QUAN LY PHIEU MUON SACH          | \n";
+	cout << "               |-------------------------------------------------| \n";
+	cout << "               |                                                 | \n";
+	cout << "               |  1. Them Phieu.                                 | \n";
+	cout << "               |  2. Xoa Phieu.                                  | \n";
+	cout << "               |                                                 | \n";
+	cout << "               |  3. Xuat Phieu.                                 | \n";
+	cout << "               |  4. Hieu chinh Phieu.                           | \n";
+	cout << "               |  5. Tim Phieu.                                  | \n";
+	cout << "               |                                                 | \n";
+	cout << "               |  6. Back.                                       | \n";
+	cout << "               |                                                 | \n";
+	cout << "               +-------------------------------------------------+ \n";
+	
+	
+	cin >> chon;
+	switch (chon) {
+	case 1: {
+		//system("cls");
+		phieu_them(l, s);
+		phieu_xuat(l);
+		break; }
+	case 2: {
+		char key[30];
+		cin.ignore();
+		cout << "nhap ma phieu can xoa:";
+		cin.getline(key, 30);
+		removeX(l, key);
+		cout << "xoa thanh cong!";
+		break; }
+	case 3: {
+		system("cls");
+		phieu_xuat(l);
+		break; }
+	case 4: {
+		system("cls");
+		char key1[50];
+		cin.getline(key1, 30);
+		phieu_hieu_chinh(l, key1);
+		break; }
+		//case '5':
+
+	case 6:
+		//goto end;
+		break;
+	}
+	/*goto begin;
+end:;*/
+}
 //
 //void interface_bill_detail_manager() {
 //begin:
@@ -310,7 +316,6 @@ end:;
 //begin:
 //	system("cls");
 //	cout << endl << endl;
-//	cout << "                SV : VUONG NGOC NAM _________________ LOP: CN08-B  \n";
 //	cout << "               +=================================================+ \n";
 //	cout << "               |         CHUONG TRINH QUAN LY THU VIEN           | \n";
 //	cout << "               |-------------------------------------------------| \n";
@@ -394,13 +399,13 @@ void nhap(list &l, int n)
 {
 	Book x[100];
 	int i = 1;
-	Booknode *p[100];
+	Booknode *p;
 		for(int i=0;i<n;i++)
 		{
 			cout << "Nhap dau sach thu " << i << " :" << endl;
 			sach_nhap(x[i]);
-			p[i] = getnode(x[i]);
-			AddTail(l, p[i]);
+			p= getnode(x[i]);
+			AddTail(l, p);
 		}
 }
 void sach_nhap(Book &a)
@@ -424,48 +429,8 @@ void sach_nhap(Book &a)
 	fflush(stdin);
 	cout << endl;
 }
-void sach_xuat(list a)
-{
-	Booknode *p;
-	cout << endl;
-	cout << "Ma sach la: " << p->info.masach << endl;
-	cout << "Ten sach la : " << p->info.tensach << endl;
-	cout << "Ten tac gia cua sach: " << p->info.tacgia << endl;
-	cout << "Ten nxb la: " << p->info.nxb << endl;
-	cout << "Ma nam xuat ban: " << p->info.namxb << endl;
-}
 
-void phieu_nhap(PhieuMuon &a)
-{
-	Phieunode *p;
-	cin.ignore();
-	cout << "Ma Phieu:";
-	cin.getline(a.maphieu, 8);
-	cout << "Ho ten:";
-	cin.getline(a.hoten, 50);
-	cout << "so luong sach muon:";
-	cin >> a.slsach;
-}
 
-void phieu_xuat(list1 &a)
-{
-	Phieunode *R;
-	int i = 1;
-	Phieunode *R = a.ahead;
-	cout << "\n";
-	if (R == NULL)
-		cout << "\n\t Danh sach trong !";
-	else
-	{
-		while (R != NULL)
-		{
-			cout << "Ma Phieu:" << p->info.maphieu << endl;
-			cout << "Ho Ten:" << p->info.hoten << endl;
-			cout << "So luong sach:" << p->info.slsach << endl;
-			R = R->pnext;
-		}
-	}
-}
 
 
 Booknode *getnode(Book &s)
@@ -477,26 +442,7 @@ Booknode *getnode(Book &s)
 	p->pnext = NULL;
 	return p;
 }
-Phieunode *getnode(PhieuMuon &s)
-{
-	Phieunode *p;
-	p = new Phieunode;
-	if (p == NULL);
-	p->info = s;
-	p->pnext = NULL;
-	return p;
-}
-void addhead(list1 &l, Phieunode *a)
-{
-	if (l.ahead == NULL) {
-		l.ahead = a;
-		l.atail = l.ahead;
-	}
-	else {
-		a->pnext = l.ahead;
-		l.ahead = a;
-	}
-}
+
 void AddHead(list &l, Booknode *p)
 {
 	if (l.phead == NULL)
@@ -510,6 +456,7 @@ void AddHead(list &l, Booknode *p)
 		l.phead = p;
 	}
 }
+
 void AddTail(list &L, Booknode *p)
 {
 	if (L.phead == NULL)
@@ -527,6 +474,7 @@ void createList(list &l)
 	l.phead = NULL;
 	l.ptail = NULL;
 }
+
 
 int RemoveX(list &l, char key[30])
 {
@@ -628,4 +576,205 @@ void xuat(list l)
 			cout << "\n ------------------------------------------";
 		}
 	}
+}
+void selectionsort(list &L)
+{
+	Booknode *p, *q, *min;
+	p = L.phead;
+	Book temp;
+	while (p != L.ptail)
+	{
+		min = p;
+		q = p->pnext;
+		while (q != NULL)
+		{
+			if (q->info.masach<min->info.masach)  min = q;
+			q = q->pnext;
+		}
+		temp = p->info;
+		p->info = min->info;
+		min->info = temp;
+		p = p->pnext;
+	}
+	xuat(L);
+}
+
+//QUAN LI PHIEU MUON
+void phieu_nhap(PhieuMuon &a)
+{
+	Phieunode *p;
+	cin.ignore();
+	cout << "Ma Phieu:";
+	cin.getline(a.maphieu, 8);
+	cout << "Ho ten:";
+	cin.getline(a.hoten, 50);
+	cout << "so luong sach muon:";
+	cin >> a.slsach;
+}
+
+void nhapphieu(list1 &l, int n)
+{
+	PhieuMuon x[100];
+	int i = 1;
+	Phieunode *p;
+	for (int i = 0; i<n; i++)
+	{
+		cout << "Phieu muon thu " << i << " :" << endl;
+		phieu_nhap(x[i]);
+		p = getnode1(x[i]);
+		addtail(l, p);
+	}
+}
+void phieu_xuat(list1 &a)
+{
+	int i = 0;
+	Phieunode *p = a.ahead;
+	cout << "\n";
+	if (p == NULL)
+		cout << "\n\t Danh sach trong !";
+	else
+	{
+		while (p != NULL)
+		{
+			cout << "phieu thu" << i++ << ":"<<endl;
+			cout << "Ma Phieu:" << p->info.maphieu << endl;
+			cout << "Ho Ten:" << p->info.hoten << endl;
+			cout << "So luong sach:" << p->info.slsach << endl;
+			p = p->pnext;
+		}
+	}
+}
+void createList1(list1 &l)
+{
+	l.ahead = NULL;
+	l.atail = NULL;
+}
+void addtail(list1 &l, Phieunode *p)
+{
+	if (l.ahead == NULL)
+	{
+		l.ahead = l.atail = p;
+	}
+	else
+	{
+		l.atail->pnext = p;
+		l.atail = p;
+	}
+}
+Phieunode *getnode1(PhieuMuon &s)
+{
+	Phieunode *p;
+	p = new Phieunode;
+	if (p == NULL);
+	p->info = s;
+	p->pnext = NULL;
+	return p;
+}
+void addhead(list1 &l, Phieunode *a)
+{
+	if (l.ahead == NULL) {
+		l.ahead = a;
+		l.atail = l.ahead;
+	}
+	else {
+		a->pnext = l.ahead;
+		l.ahead = a;
+	}
+}
+void phieu_them(list1 &l,PhieuMuon &a)
+{
+	Phieunode *p;
+	cin.ignore();
+	cout << "Ma Phieu:";
+	cin.getline(a.maphieu, 8);
+	cout << "Ho ten:";
+	cin.getline(a.hoten, 50);
+	cout << "so luong sach muon:";
+	cin >> a.slsach;
+	p = getnode1(a);
+	addhead(l,p);
+}
+int removeafterQ(list1 &l, Phieunode *q)
+{
+	if (q != NULL&& q->pnext != NULL)
+	{
+
+		Phieunode *p = q->pnext;
+		q->pnext = p->pnext;
+		if (p == l.atail)
+			l.atail = q;
+
+		delete p;	
+		return 1;
+
+	}
+	else
+		return 0;
+}
+int phieu_xoa(list1 &l)
+{
+	Phieunode *p;
+	if (l.ahead != NULL)
+	{
+		p = l.ahead;
+		l.ahead = l.ahead->pnext;
+		delete p;
+		if (l.ahead == NULL)
+			l.atail = NULL;
+		return 1;
+	}
+	return 0;
+}
+int removeX(list1 &l, char key[30])
+{
+	Phieunode *p, *q = NULL;
+	p = l.ahead;
+	if (p == NULL)
+		return 0;
+	while ((p != NULL) && (strcmp(p->info.maphieu, key) != 0)) // nếu p!=NULL và khi chưa phải là khóa key thì tiếp tục tìm ;lưu ý rằng vòng lặp này đưa con trỏ q tới nút kế tiếp nút có khóa key
+	{
+
+		q = p;
+		p = p->pnext;
+
+	}
+	if (strcmp(l.ahead->info.maphieu, key) == 0) // vì dử dụng hàm xóa 1 nút đằng sau nút q thì phải xét nội dung của nút đầu trứoc,nếu trùng với khóa key thì tiến hành xóa nút đầu
+	{
+		phieu_xoa(l);
+		return 1;
+	}
+
+	if (q != NULL) // còn nếu khác đồng thời phía trên tìm đc ví trí nút q thì tiến hnahf xóa nút kế tiếp nút q ,cũng chính là nút có khóa key
+	{
+		removeafterQ(l, q);
+	}
+	else
+		return 1;
+
+}
+void phieu_hieu_chinh(list1 l, char key[30])
+{
+	Phieunode *p;
+	PhieuMuon a;
+	p = l.ahead;
+		cout << "nhap ma phieu can hieu chinh!";
+		cin >> key;
+		while ((p != NULL))
+		{
+			if (strcmp(p->info.maphieu, key) == 0) {
+				removeX(l, key);
+				cin.ignore();
+				cout << "Ma Phieu:";
+				cin.getline(a.maphieu, 8);
+				cout << "Ho ten:";
+				cin.getline(a.hoten, 50);
+				cout << "so luong sach muon:";
+				cin >> a.slsach;
+				p = getnode1(a);
+				addhead(l, p);
+			}
+			p = p->pnext;
+		}
+		phieu_xuat(l);
+
 }
