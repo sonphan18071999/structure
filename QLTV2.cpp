@@ -1,7 +1,4 @@
-﻿// QLTV2.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "iostream"
 #include "cstring"
 #include "iomanip"
@@ -81,7 +78,7 @@ LIST_BOOK lst_book;             // Bien lst_book la mang 50 cuon sach.
 LIST_BILL lst_bill;             // Bien lst_bill la mang 50 phieu muon.
 LIST_DETAIL lst_detail;         // Bien lst_detail la mang 50 chi tiet phieu muon.
 
-//--------------------------------------------------
+								//--------------------------------------------------
 
 Phieunode *getnode1(PhieuMuon &s);
 void phieu_load_file();
@@ -98,7 +95,6 @@ int removeX(list1 &l, char key[30]);
 int removeAfterQ(list1 &l, Phieunode *q);
 void tim_phieu(list1 &l, char key[50]);
 void createList1(list1 &l);
-int timtensach(char ma_tam[]);
 
 
 //-----------------------------------------------
@@ -134,8 +130,8 @@ void sach_save_file();
 
 //-----------------------------------------------
 void theloai(list l);
-void TK_SV_qua_han(list1 &l);          
-int days_in_month(int md, int dd);       
+void TK_SV_qua_han(list1 &l);
+int days_in_month(int md, int dd);
 //-----------------------------------------------
 
 
@@ -146,11 +142,11 @@ void interface_book_manager();
 void interface_bill_manager();
 void interface_bill_detail_manager();
 
-void main()                                                                                 
-{               
+void main()
+{
 	interface_main();
-}                                                                                       
-																						
+}
+
 void interface_book_manager() {
 
 	Book s;
@@ -160,13 +156,13 @@ void interface_book_manager() {
 	char key[30];
 	createList(l);
 	int n;
-	nhap(l);
 begin:
 	//system("cls");
 	cout << endl << endl;
 	cout << "               +-------------------------------------------------+ \n";
 	cout << "               |      GIAO DIEN QUAN LY SACH TRONG THU VIEN      | \n";
 	cout << "               |-------------------------------------------------| \n";
+	cout << "               |  0. Nhap Sach                                   | \n";
 	cout << "               |  1. Them 1 quyen sach vao dau danh sach         | \n";
 	cout << "               |  2. Duyet danh sach                             | \n";
 	cout << "               |  3. Xoa 1 Phan Tu dau Danh Sach                 | \n";
@@ -178,12 +174,18 @@ begin:
 	cout << "               |                                                 | \n";
 	cout << "               +-------------------------------------------------+ \n";
 
-	
-	
+
+
 
 	scanf("%d", &chon);
 	switch (chon)
 	{
+	case 0:
+	{
+		system("cls");
+		nhap(l);
+		break;
+	}
 	case 1: {
 		themsach(l);
 		break;
@@ -195,7 +197,7 @@ begin:
 	}
 	case 3:
 	{
-		
+
 		RemoveHead(l);
 		cout << "\n\t Xoa Thanh Cong !!!";
 		xuat(l);
@@ -205,14 +207,14 @@ begin:
 	{
 		cout << "\n\t Nhap ten quyen sach can xoa : ";
 		scanf("%s", &key);
-		int t=RemoveX(l, key);
+		int t = RemoveX(l, key);
 		if (t == 1) {
 			cout << "xoa thanh cong!";
 			xuat(l);
 		}
 		else cout << "khong tim thay!";
-		
-		
+
+
 		break;
 	}
 	case 5:
@@ -375,15 +377,10 @@ nhap_ma:;
 		cout << "   Ma Sach nay da ton tai. Hay nhap enter de nhap lai!";
 		goto nhap_ma;
 	}
-	
-	s.masach= ma_tam;
-	printf("\n\t Nhap Ten Sach: "); scanf("%s", &s.tensach);
-	printf("\n\t Nhap Ten Tac Gia: "); scanf("%s", &s.tacgia);
-	printf("\n\t Nhap Ten NXB: "); scanf("%s", &s.nxb);
-	printf("\n\t Nhap Nam Xuat Ban: "); scanf("%d", &s.namxb);
-	printf("\n\t Nhap The Loai: "); scanf("%s", &s.theloai);
-	printf("\n\t Nhap SLS: "); scanf("%d", &s.sl);
-	p = getnode(s);
+
+	lst_book[i].masach = ma_tam;
+	sach_nhap(lst_book[i]);
+	p = getnode(lst_book[i]);
 	AddHead(l, p);
 	sach_save_file();
 	file_info();
@@ -484,11 +481,46 @@ int sach_tim(int ma_tam)
 	else
 		return jump;
 }
+void theloai(list l)
+{
+	Booknode *p;
+	p = l.phead;
+	char sach_theloai_tam[50];
+	int p2 = 0;
+	int i = 1;
+	cin.ignore(1);
+	cout << ". Nhap the loai muon thong ke: ";
+	cin.getline(sach_theloai_tam, 50);
+	cout << endl;
+	if (p == NULL)
+		cout << "Danh sach trong!";
+	else
+	{
+		while (p != NULL)
+		{
+			if (strcmp(p->info.theloai, sach_theloai_tam) == 0) {
+				cout << "\n ------------------------------------------";
+				cout << "\n | Sach thu: " << i++ << "                             |";
+				cout << "\n ------------------------------------------";
+				cout << "\n Ma Sach:" << p->info.masach;
+				cout << "\n Ten Sach:" << p->info.tensach;
+				cout << "\n The Loai:" << p->info.theloai;
+				cout << "\n So Luong:" << p->info.sl;
+				cout << "\n ------------------------------------------";
+				p2 = p2 + 1;
+			}
 
+			p = p->pnext;
+		}
+		cout << endl << "- Co " << p2 << " cuon sach co the loai : " << sach_theloai_tam;
+		if (p2 == 0)
+			cout << endl << "- Khong co sach nao thuoc the loai : " << sach_theloai_tam;
+	}
+}
 void xuat(list l)
 {
 	sach_load_file();
-	
+
 	int i = 1;
 	Booknode *R = l.phead;
 	cout << "\n";
@@ -512,13 +544,13 @@ void xuat(list l)
 			cout << "\n ------------------------------------------";
 		}
 	}
-	
+
 }
 void selectionsort(list &L)
 {
 	Booknode *p, *q, *min;
 	p = L.phead;
-    lst_book[i];
+	lst_book[i];
 	while (p != L.ptail)
 	{
 		min = p;
@@ -534,7 +566,7 @@ void selectionsort(list &L)
 		p = p->pnext;
 	}
 	xuat(L);
-	
+
 }
 
 //----------------------------QUAN LI PHIEU MUON-----------------------------
@@ -561,8 +593,8 @@ void interface_bill_manager() {
 	int x, chon;
 	createList1(l);
 
+
 	
-	nhapphieu(l);
 	system("cls");
 begin:
 	cout << endl << endl;
@@ -570,6 +602,7 @@ begin:
 	cout << "               |      GIAO DIEN QUAN LY PHIEU MUON SACH          | \n";
 	cout << "               |-------------------------------------------------| \n";
 	cout << "               |                                                 | \n";
+	cout << "               |  0. Nhap Phieu.                                 | \n";
 	cout << "               |  1. Them Phieu.                                 | \n";
 	cout << "               |  2. Xoa Phieu.                                  | \n";
 	cout << "               |                                                 | \n";
@@ -584,22 +617,30 @@ begin:
 
 	cin >> chon;
 	switch (chon) {
+	case 0:
+	{
+		system("cls");
+		nhapphieu(l);
+		//phieu_xuat(l);
+		break;
+	}
 	case 1: {
 		system("cls");
-		phieu_them(l, s);
-		phieu_xuat(l);
+		phieu_them(l,s);
+		//phieu_xuat(l);
 		break; }
 	case 2: {
 		char key[30];
 		cin.ignore();
 		cout << "nhap ma phieu can xoa:";
 		cin.getline(key, 30);
-		int t=removeX(l,key);
+		int t = removeX(l, key);
 		if (t == 1) {
 			cout << "xoa thanh cong!";
 			phieu_xuat(l);
-		}else
-		cout << "khong tim thay!";
+		}
+		else
+			cout << "khong tim thay!";
 		break; }
 	case 3: {
 		system("cls");
@@ -616,7 +657,7 @@ begin:
 		char x1[50];
 		cout << "nhap phieu can tim:";
 		cin.ignore();
-		cin.getline( x1,50);
+		cin.getline(x1, 50);
 		tim_phieu(l, x1);
 		break;
 	}
@@ -624,11 +665,11 @@ begin:
 	case 6:
 		goto end;
 		break;
-		
-		
+
+
 	}
 	goto begin;
-	end:;
+end:;
 }
 
 void phieu_nhap(PhieuMuon &a)
@@ -640,21 +681,21 @@ void phieu_nhap(PhieuMuon &a)
 	cout << "Ho ten:";
 	cin.getline(a.hoten, 50);
 	cout << ". Ngay Muon     : \n";
-	cout << " Ngay "; cin >> a.bill_ngaymuon.n_day;
+	cout << " Ngay: "; cin >> a.bill_ngaymuon.n_day;
 	cout << " thang: "; cin >> a.bill_ngaymuon.n_month;
 	cout << " nam: "; cin >> a.bill_ngaymuon.n_year;
 	cout << endl;
 }
 void nhapphieu(list1 &l)
 {
-	
+
 	int i = 1;
 	Phieunode *p;
 	PhieuMuon a;
 	char ma_tam[50];
 
 	cout << "Day la lan dang ki phieu muon dau tien. \n";
-	cout << "Hay nhap tong so luong phieu muon se duoc dang ki : "; 
+	cout << "Hay nhap tong so luong phieu muon se duoc dang ki : ";
 	cin >> total_bill;
 	cout << endl;
 
@@ -668,7 +709,7 @@ void nhapphieu(list1 &l)
 			goto nhap_ma;
 		}
 		//cin.ignore();
-		
+
 		cout << "Phieu muon thu " << i << " :" << endl;
 		strcpy(lst_bill[i].masv, ma_tam);
 		phieu_nhap(lst_bill[i]);
@@ -693,10 +734,10 @@ void phieu_xuat(list1 &a)
 			cout << "\n ------------------------------------------";
 			cout << "\n | Phieu thu: " << i++ << "                             |";
 			cout << "\n ------------------------------------------";
-			cout << "\n Ma SV:" << p->info.masv ;
-			cout << "\n Ho Ten:" << p->info.hoten ;
+			cout << "\n Ma SV:" << p->info.masv;
+			cout << "\n Ho Ten:" << p->info.hoten;
 			cout << "\n. Ngay Muon     : \n";
-			cout << " \tNgay " << p	->info.bill_ngaymuon.n_day;
+			cout << " \tNgay: " << p->info.bill_ngaymuon.n_day;
 			cout << " \tThang: " << p->info.bill_ngaymuon.n_month;
 			cout << " \tNam: " << p->info.bill_ngaymuon.n_year;
 			cout << "\n ------------------------------------------";
@@ -743,7 +784,7 @@ void addhead(list1 &l, Phieunode *a)
 		l.ahead = a;
 	}
 }
-void phieu_them(list1 &l,PhieuMuon &a)
+void phieu_them(list1 &l, PhieuMuon &a)
 {
 	Phieunode *p;
 	char ma_tam[50];
@@ -758,8 +799,8 @@ nhap_ma:;
 	//cin.ignore();
 	strcpy(lst_bill[i].masv, ma_tam);
 	cout << "Phieu muon thu " << i << " :" << endl;
-	phieu_nhap(lst_bill[i]);
-	p = getnode1(lst_bill[i]);
+	phieu_nhap(lst_bill[i++]);
+	p = getnode1(lst_bill[i++]);
 	addtail(l, p);
 	phieu_save_file();
 	file_info();
@@ -829,7 +870,7 @@ void phieu_hieu_chinh(list1 l, char key[30])
 	p = l.ahead;
 	//cin.ignore();
 	cout << "nhap ma phieu can hieu chinh!";
-	cin.getline(key,10);
+	cin.getline(key, 10);
 	while ((p != NULL))
 	{
 		if (phieu_tim(key) == 1) {
@@ -842,7 +883,7 @@ void phieu_hieu_chinh(list1 l, char key[30])
 		p = p->pnext;
 	}
 	phieu_save_file();
-	
+
 	phieu_xuat(l);
 
 }
@@ -853,14 +894,14 @@ void tim_phieu(list1 &l, char key[50])
 	Phieunode a;
 	int i = 1;
 	p = l.ahead;
-	while (p != NULL )
+	while (p != NULL)
 	{
 		if (strcmp(p->info.masv, key) == 0) {
 			cout << "\n ------------------------------------------";
 			cout << "\n | Phieu Muon thu: " << i++ << "                             |";
 			cout << "\n ------------------------------------------";
-			cout << "\n Ma SV:" << p->info.masv ;
-			cout << "\n Ho ten:" << p->info.hoten ;
+			cout << "\n Ma SV:" << p->info.masv;
+			cout << "\n Ho ten:" << p->info.hoten;
 			cout << "\n. Ngay Muon     : \n";
 			cout << " \tNgay: " << p->info.bill_ngaymuon.n_day;
 			cout << " \tThang: " << p->info.bill_ngaymuon.n_month;
@@ -877,14 +918,14 @@ void tim_phieu(list1 &l, char key[50])
 
 
 void interface_bill_detail_manager() {
-begin:
+
 	//system("cls");
 	list l1;
 	list2 l;
 	Createlist2(l);
 	createList(l1);
-	//ctphieu_nhap(l, l1);
-
+begin:;
+	//ctphieu_nhap(l);
 	cout << endl << endl;
 	cout << "               +-------------------------------------------------+ \n";
 	cout << "               |     GIAO DIEN QUAN LY CHI TIET PHIEU MUON       | \n";
@@ -900,7 +941,6 @@ begin:
 
 	char chon;
 	bool k = true;
-
 	do
 	{
 		if (k == false)
@@ -910,10 +950,11 @@ begin:
 		k = false;
 	} while ((chon < '1') || (chon > '3'));
 
-
+	
 	switch (chon) {
-	case '1':  // system("cls");
+	case '1':
 	{
+		system("cls");
 		ctphieu_nhap(l);
 		break;
 	}
@@ -963,7 +1004,7 @@ void addHead(list2 &l, CTPMnode *p)
 		l.bhead = p;
 	}
 }
-int phieu_tim(char ma_tam[]) 
+int phieu_tim(char ma_tam[])
 {
 	int jump = 1;
 
@@ -971,19 +1012,6 @@ int phieu_tim(char ma_tam[])
 		jump++;
 
 	if (jump > total_bill)
-		return 0;
-	else
-		return jump;
-
-}
-int timtensach(char ma_tam[])
-{
-	int jump = 1;
-
-	while ((jump <= total_book) && (strcmp(lst_book[jump].tensach, ma_tam) != 0))
-		jump++;
-
-	if (jump > total_book)
 		return 0;
 	else
 		return jump;
@@ -1010,61 +1038,63 @@ void ctphieu_nhap(list2 &l)
 	char t;
 	int total_tam;
 	int i = 0;
-muon:;
-	cin.ignore();
-	cout << ". So sach se muon : "; 
-	cin >> total_tam;
-
-	if (total + total_tam > 5) {
-		cout << "- Ban chi co the muon toi da 5 cuon. \n";
-		cout << "  Ban duoc phep muon them  " << 5 - total << "  cuon nua.";
-		goto muon;
-	}
-
-	for (int i = 1; i <= total_tam; i++)
-	{{
-		cin.ignore(1);
+	int u;
+	cout << "nhap so luong sinh vien:";
+	cin >> u;
+	for (int a = 1; a <= u; a++) {
+	phieu_muon:;
+		cin.ignore();
 		cout << endl;
-		cout << ". Nhap ma phieu : ";
+		cout << ". Nhap ma SV : ";
 		cin.getline(phieu_ma_tam, 50);
-
 		if (phieu_tim(phieu_ma_tam) == 0) {
 			cout << "- Khong tim thay phieu muon cua ban.";
-			break;
+			goto phieu_muon;
 		}
-
-	nhap_ma_sach:;
-		//cin.ignore(1);
-		cout << ". Nhap Ma Sach : ";
-		cin >> sach_ma_tam;
-		t = sach_tim(sach_ma_tam);
-		if (t == 0) {
-			cout << ". Khong tim thay sach ban can.";
-			cout << "  Ban muon muon sach khac (y/n) : ";
-			cin >> t;
-			if (t == 'y' || t == 'Y')
-				goto nhap_ma_sach;
-			else
-				break;
-		}
-		strcpy(lst_detail[i].masv, phieu_ma_tam);
-		lst_detail[i].masach = sach_ma_tam;
-		strcpy(lst_detail[i].tensach, lst_book[p1].tensach);
-
-		cout << strcpy(lst_detail[i].tensach, lst_book[p1].tensach);
-		cin.ignore();
-		cout << ". Tra / Chua : ";
-		cin.getline(lst_detail[i].trachua, 10);
-	}
-		if (strcmp(lst_detail[i].trachua, "chua") == 0)
-			lst_book[p1].sl = lst_book[p1].sl - 1;
-		else
-			lst_book[p1].sl = lst_book[p1].sl + 1;
 		k = getnode2(lst_detail[i]);
 		addTail(l, k);
-		/*p = getnode(lst_book[p1]);
-		AddTail(l1, p);*/
-	
+	muon:;
+		cin.ignore();
+		cout << ". So sach se muon : ";
+		cin >> total_tam;
+
+		if (total + total_tam > 5) {
+			cout << "- Phieu muon chi co the muon toi da 5 cuon. \n";
+			cout << "  Ban duoc phep muon them  " << 5 - total << "  cuon nua.";
+			cout << "  Moi ban nhap lai!!!";
+			goto muon;
+		}
+		for (int i = 1; i <= total_tam; i++)
+		{
+			{
+			nhap_ma_sach:;
+				//cin.ignore(1);
+				cout << ". Nhap Ma Sach : ";
+				cin >> sach_ma_tam;
+				t = sach_tim(sach_ma_tam);
+				if (t == 0) {
+					cout << ". Khong tim thay sach ban can.";
+					cout << "  Ban muon muon sach khac (y/n) : ";
+					cin >> t;
+					if (t == 'y' || t == 'Y')
+						goto nhap_ma_sach;
+					else
+						break;
+				}
+				strcpy(lst_detail[i].masv, phieu_ma_tam);
+				lst_detail[i].masach = sach_ma_tam;
+				strcpy(lst_detail[i].tensach, lst_book[t].tensach);
+				cin.ignore();
+				cout << ". Tra / Chua : ";
+				cin.getline(lst_detail[i].trachua, 10);
+			}
+			if (strcmp(lst_detail[i].trachua, "chua") == 0)
+				lst_book[t].sl = lst_book[t].sl - 1;
+			else
+				lst_book[t].sl = lst_book[t].sl + 1;
+			k = getnode2(lst_detail[i]);
+			addTail(l, k);
+		}
 	}
 	ctphieu_save_file();
 	file_info();
@@ -1073,14 +1103,14 @@ muon:;
 void ctphieu_xuat(list2 l)
 {
 	ctphieu_load_file();
-	
+
 	char phieu_ma_tam[8];
 	p1 = 0;
 	cin.ignore();
-	cout << ". Nhap ma phieu : ";
+	cout << ". Nhap ma Sinh Vien : ";
 	cin.getline(phieu_ma_tam, 8);
 	int i = 1;
-	CTPMnode *p=l.bhead;
+	CTPMnode *p = l.bhead;
 	if (p == NULL)
 		cout << "\n\t Danh sach trong !";
 	else {
@@ -1092,8 +1122,8 @@ void ctphieu_xuat(list2 l)
 				cout << "\n | CTPM thu: " << i++ << "                             |";
 				cout << "\n ------------------------------------------";
 				cout << "\n Ma Sach:" << p->info.masach;
-				cout << "\n Ten Sach:"<< p->info.tensach;
-				cout << "\n Tra/Chua:"<< p->info.trachua << endl << endl;
+				cout << "\n Ten Sach:" << p->info.tensach;
+				cout << "\n Tra/Chua:" << p->info.trachua << endl << endl;
 			}
 			p = p->pnext;
 		}
@@ -1122,10 +1152,8 @@ begin:
 	cout << "               |  1. Quan ly sach trong Thu vien.                | \n";
 	cout << "               |  2. Quan ly phieu ban doc  .                    | \n";
 	cout << "               |  3. Quan ly Chi tiet phieu muon sach.           | \n";
+	cout << "               |  4. Exit.                                       | \n";
 	cout << "               |                                                 | \n";
-	cout << "               |  4. Thong ke doc gia muon qua han               | \n";
-	cout << "               |                                                 | \n";
-	cout << "               |  5. Exit.                                       | \n";
 	cout << "               |                                                 | \n";
 	cout << "               +-------------------------------------------------+ \n";
 
@@ -1157,56 +1185,13 @@ begin:
 		interface_bill_detail_manager();
 		break;
 	case '4':
-		system("cls");
-		theloai(l);
-		break;
-	case '5':
-		system("cls");
-		TK_SV_qua_han(l1);
-		break;
-	case '6':
 		goto end;
 		break;
 	}
 	goto begin;
 end:;
 }
-void theloai(list l)
-{
-	Booknode *p;
-	p = l.phead;
-	char sach_theloai_tam[50];
-	int p2 = 0;
-	int i = 1;
-	cin.ignore(1);
-	cout << ". Nhap the loai muon thong ke: ";
-	cin.getline(sach_theloai_tam, 50);
-	cout << endl;
-	if (p == NULL)
-		cout << "Danh sach trong!";
-	else
-	{
-		while (p != NULL)
-		{
-			if (strcmp(p->info.theloai, sach_theloai_tam) == 0) {
-				cout << "\n ------------------------------------------";
-				cout << "\n | Sach thu: " << i++ << "                             |";
-				cout << "\n ------------------------------------------";
-				cout << "\n Ma Sach:" << p->info.masach;
-				cout << "\n Ten Sach:" << p->info.tensach;
-				cout << "\n The Loai:" << p->info.theloai;
-				cout << "\n So Luong:" << p->info.sl;
-				cout << "\n ------------------------------------------";
-				p2 = p2 + 1;
-			}
 
-			p = p->pnext;
-		}
-		cout << endl << "- Co " << p2 << " cuon sach co the loai : " << sach_theloai_tam;
-		if (p2 == 0)
-			cout << endl << "- Khong co sach nao thuoc the loai : " << sach_theloai_tam;
-	}
-}
 void TK_SV_qua_han(list1 &l)
 {
 	SYSTEMTIME d;
@@ -1220,7 +1205,7 @@ void TK_SV_qua_han(list1 &l)
 	cout << endl;
 	cout << setw(15) << "So Phieu" << setw(15) << "Ten SV" << endl << endl;
 
-	for (p=l.ahead ; p !=NULL; p=p->pnext) {
+	for (p = l.ahead; p != NULL; p = p->pnext) {
 		if ((p->info.bill_ngaymuon.n_year == n_y) && (p->info.bill_ngaymuon.n_month == n_m))
 			d_quahan = n_d - p->info.bill_ngaymuon.n_day;
 		if ((p->info.bill_ngaymuon.n_year == n_y) && (p->info.bill_ngaymuon.n_month != n_m))
@@ -1230,7 +1215,7 @@ void TK_SV_qua_han(list1 &l)
 		cout << setw(15) << p->info.masv << setw(15) << p->info.masv << endl;
 	}
 }
-int days_in_month(int md, int dd) 
+int days_in_month(int md, int dd)
 {
 	switch (md)
 	{
